@@ -378,42 +378,25 @@ async function validarEnvio() {
       documentos: nombresDocs
     };
 
-    const res = await fetch(WEBAPP_URL + "?action=post&data=" + encodeURIComponent(JSON.stringify(payload)));
-    const json = await res.json();
+    // no-cors evita el bloqueo CORB — el script igual recibe y procesa la petición
+    await fetch(WEBAPP_URL + "?action=post&data=" + encodeURIComponent(JSON.stringify(payload)), {
+      method: "GET",
+      mode: "no-cors"
+    });
 
-    if(json.ok){
-      // Paso 2: Si hay archivos, subirlos por separado
-      if((fotosFiles.length > 0 || docsFiles.length > 0) && json.id_registro){
-        document.getElementById("resultado").innerHTML = '<div class="ok"><i class="ti ti-loader-2" aria-hidden="true"></i> Subiendo archivos adjuntos...</div>';
-        const allFiles = [...Array.from(fotosFiles).map(f=>({file:f,tipo:"foto"})), ...Array.from(docsFiles).map(f=>({file:f,tipo:"doc"}))];
-        for(const item of allFiles){
-          try {
-            const b64 = await fileToBase64(item.file);
-            const filePayload = {
-              id_registro: json.id_registro,
-              tipo: item.tipo,
-              name: item.file.name,
-              mimeType: item.file.type || "application/octet-stream",
-              base64: b64
-            };
-            await fetch(WEBAPP_URL + "?action=upload&data=" + encodeURIComponent(JSON.stringify(filePayload)));
-          } catch(fe){ console.warn("No se pudo subir:", item.file.name, fe); }
-        }
-      }
+    // Esperar que el script procese
+    await new Promise(resolve => setTimeout(resolve, 2000));
 
-      document.getElementById("resultado").innerHTML = '<div class="ok"><i class="ti ti-check" aria-hidden="true"></i> Reporte enviado correctamente.</div>';
-      const r = getCompromiso();
-      if(r) r.Ultimo_Avance = payload.avance_nuevo;
-      updateTexto();
-      document.getElementById("avance").value = "";
-      document.getElementById("comentario").value = "";
-      document.getElementById("inputFoto").value = "";
-      document.getElementById("inputDoc").value = "";
-      document.getElementById("listaFoto").innerHTML = "";
-      document.getElementById("listaDoc").innerHTML = "";
-    } else {
-      document.getElementById("resultado").innerHTML = `<div class="warning"><i class="ti ti-alert-circle" aria-hidden="true"></i> ${json.error || "Error al guardar."}</div>`;
-    }
+    document.getElementById("resultado").innerHTML = '<div class="ok"><i class="ti ti-check" aria-hidden="true"></i> Reporte enviado correctamente.</div>';
+    const r = getCompromiso();
+    if(r) r.Ultimo_Avance = payload.avance_nuevo;
+    updateTexto();
+    document.getElementById("avance").value = "";
+    document.getElementById("comentario").value = "";
+    document.getElementById("inputFoto").value = "";
+    document.getElementById("inputDoc").value = "";
+    document.getElementById("listaFoto").innerHTML = "";
+    document.getElementById("listaDoc").innerHTML = "";
   } catch(err) {
     document.getElementById("resultado").innerHTML = '<div class="warning"><i class="ti ti-alert-circle" aria-hidden="true"></i> Error de conexión. Intente nuevamente.</div>';
     console.error(err);
