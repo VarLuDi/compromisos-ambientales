@@ -190,13 +190,14 @@ function fillSelect(id, values, placeholder="Seleccione...") {
 function jsonp(url, callbackName) {
   return new Promise((resolve, reject) => {
     const script = document.createElement("script");
+    const sep = url.includes("?") ? "&" : "?";
     window[callbackName] = function(data) {
       resolve(data);
       delete window[callbackName];
-      document.body.removeChild(script);
+      if(script.parentNode) document.body.removeChild(script);
     };
-    script.src = url + "&callback=" + callbackName;
-    script.onerror = reject;
+    script.src = url + sep + "callback=" + callbackName;
+    script.onerror = (e) => { reject(e); if(script.parentNode) document.body.removeChild(script); };
     document.body.appendChild(script);
   });
 }
