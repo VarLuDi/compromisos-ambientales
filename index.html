@@ -1,0 +1,415 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Registro de Avances - Compromisos Ambientales</title>
+<style>
+:root{
+  --primary:#0f766e;
+  --primary-dark:#0b5a54;
+  --primary-light:#ccfbf1;
+  --bg:#f1f5f4;
+  --card:#ffffff;
+  --text:#1f2937;
+  --text-soft:#64748b;
+  --border:#dbe5e3;
+  --danger:#dc2626;
+  --danger-bg:#fef2f2;
+  --warning:#d97706;
+  --warning-bg:#fff7ed;
+  --success:#059669;
+  --success-bg:#ecfdf5;
+  --critico:#dc2626;
+  --medio:#d97706;
+  --bajo:#059669;
+  --accent:#FFCD00;
+  --navy:#1A2242;
+}
+*{box-sizing:border-box;}
+body{font-family:'Segoe UI',Arial,sans-serif;background:var(--bg);margin:0;color:var(--text);}
+header{background:var(--accent);color:var(--navy);padding:18px 24px;display:flex;align-items:center;justify-content:space-between;gap:20px;}
+header h1{margin:0;font-size:1.05rem;font-weight:700;color:var(--navy);line-height:1.3;}
+header p{margin:3px 0 0;opacity:0.85;font-size:0.78rem;color:var(--navy);}
+.header-text{min-width:0;}
+.header-logo{flex-shrink:0;display:flex;align-items:center;}
+.header-logo img{height:38px;width:auto;border-radius:6px;display:block;}
+main{max-width:980px;margin:24px auto;padding:0 16px 60px;}
+.card{background:var(--card);border-radius:16px;padding:24px;box-shadow:0 4px 16px rgba(26,34,66,0.08);margin-bottom:18px;border:1px solid var(--border);}
+.card h2{margin:0 0 16px;font-size:1.1rem;color:var(--navy);display:flex;align-items:center;gap:8px;}
+.step-num{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;background:var(--navy);color:white;border-radius:50%;font-size:0.85rem;font-weight:700;flex-shrink:0;}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;}
+label{font-weight:600;display:block;margin-bottom:6px;font-size:0.92rem;color:var(--text);}
+select,input,textarea{width:100%;box-sizing:border-box;border:1.5px solid var(--border);border-radius:10px;padding:11px 12px;font-size:15px;background:white;color:var(--text);font-family:inherit;transition:border-color .15s;}
+select:focus,input:focus,textarea:focus{outline:none;border-color:var(--primary);}
+select:disabled,input:disabled{background:#f8fafc;color:var(--text-soft);cursor:not-allowed;}
+textarea{min-height:90px;resize:vertical;}
+.full{grid-column:1/-1;}
+.badge{display:inline-block;border-radius:999px;padding:6px 12px;margin:4px 6px 0 0;font-size:12.5px;font-weight:600;}
+.badge-blue{background:#e0f2fe;color:#075985;}
+.badge-critico{background:#fee2e2;color:#991b1b;}
+.badge-medio{background:#fef3c7;color:#92400e;}
+.badge-bajo{background:#d1fae5;color:#065f46;}
+button{background:var(--navy);color:white;border:0;border-radius:10px;padding:13px 22px;font-weight:700;font-size:15px;cursor:pointer;transition:background .15s;}
+button:hover{background:#272f57;}
+button.secondary{background:white;color:var(--navy);border:1.5px solid var(--navy);}
+button.secondary:hover{background:#f1f2f6;}
+button:disabled{background:#cbd5e1;color:#94a3b8;cursor:not-allowed;border-color:#cbd5e1;}
+.help{color:var(--text-soft);font-size:13px;margin-top:6px;}
+.warning{background:var(--warning-bg);color:#9a3412;border:1px solid #fdba74;border-radius:10px;padding:12px 14px;margin-top:10px;font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px;}
+.ok{background:var(--success-bg);color:#065f46;border:1px solid #6ee7b7;border-radius:10px;padding:12px 14px;margin-top:10px;font-weight:600;font-size:14px;display:flex;align-items:center;gap:8px;}
+.preview{background:rgba(26,34,66,0.05);border:1px dashed rgba(26,34,66,0.35);border-radius:14px;padding:16px;color:var(--navy);}
+.preview p{margin:6px 0;font-size:14px;color:var(--navy);}
+.preview b{color:var(--navy);}
+.compromiso-detail{background:var(--navy);color:#ffffff;border-radius:10px;padding:12px 14px;margin-top:10px;font-size:14px;line-height:1.6;}
+.avance-pill{display:flex;align-items:center;justify-content:space-between;background:#f8fafc;border-radius:10px;padding:10px 14px;margin-top:10px;font-size:13.5px;}
+.avance-pill strong{font-size:1.1rem;color:var(--navy);}
+.progress-track{background:#e2e8f0;border-radius:999px;height:8px;overflow:hidden;margin-top:6px;}
+.progress-fill{background:var(--primary);height:100%;border-radius:999px;transition:width .3s;}
+.file-drop{border:1.5px dashed var(--border);border-radius:10px;padding:18px;text-align:center;font-size:13.5px;color:var(--text-soft);cursor:pointer;transition:border-color .15s,background .15s;background:#fafcfc;}
+.file-drop:hover{border-color:var(--primary);background:var(--primary-light);}
+.file-drop i{font-size:22px;display:block;margin:0 auto 6px;color:var(--primary);}
+.file-list{margin-top:8px;text-align:left;}
+.file-item{font-size:12.5px;padding:4px 8px;background:white;border-radius:6px;margin-top:4px;border:1px solid var(--border);display:flex;align-items:center;gap:6px;}
+.btn-row{display:flex;gap:12px;margin-top:18px;flex-wrap:wrap;}
+.footer-note{text-align:center;color:var(--text-soft);font-size:12.5px;margin-top:20px;}
+@media (max-width:720px){.grid{grid-template-columns:1fr;}.btn-row{flex-direction:column;}.btn-row button{width:100%;}header{padding:14px 16px;}header h1{font-size:1rem;}header p{font-size:0.78rem;}.header-logo img{height:28px;}}
+</style>
+</head>
+<body>
+<header>
+  <div class="header-text">
+    <h1>Registro de Avances - Compromisos Ambientales</h1>
+    <p>Corporación Rico S.A.C. &middot; Seguimiento de Instrumentos de Gestión Ambiental (IGA)</p>
+  </div>
+  <div class="header-logo">
+    <img src="data:image/png;base64,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" alt="Rico Alimentos">
+  </div>
+</header>
+
+<main>
+<section class="card">
+<h2><span class="step-num">1</span> Selección del compromiso</h2>
+<div class="grid">
+  <div>
+    <label>Actividad</label>
+    <select id="actividad"></select>
+  </div>
+  <div>
+    <label>Unidad fiscalizable</label>
+    <select id="unidad"></select>
+  </div>
+  <div>
+    <label>Granja / área operativa</label>
+    <select id="subunidad"></select>
+  </div>
+  <div>
+    <label>Compromiso ambiental</label>
+    <select id="compromiso"></select>
+  </div>
+  <div class="full" id="detalleWrap" style="display:none">
+    <label>Detalle del compromiso seleccionado</label>
+    <div class="compromiso-detail" id="textoCompromiso"></div>
+    <div class="avance-pill" id="avancePill" style="display:none">
+      <div>
+        <span>Último avance reportado:</span> <strong id="ultimoAvanceVal">0%</strong>
+        <div class="progress-track"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
+      </div>
+    </div>
+  </div>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="step-num">2</span> Reporte del avance</h2>
+<div class="grid">
+  <div class="full">
+    <label>Nombre y apellidos de quien reporta</label>
+    <input type="text" id="reportante" placeholder="Ej. Tirso Quispe">
+  </div>
+  <div>
+    <label>Fecha de reporte</label>
+    <input type="date" id="fecha">
+  </div>
+  <div>
+    <label>Avance reportado (%)</label>
+    <input type="number" min="0" max="100" id="avance" placeholder="Ej. 75">
+    <div id="mensajeAvance"></div>
+  </div>
+  <div class="full">
+    <label>Comentario del avance</label>
+    <textarea id="comentario" placeholder="Describir el avance ejecutado, evidencia generada, pendiente o sustento técnico."></textarea>
+  </div>
+  <div>
+    <label>Evidencia fotográfica</label>
+    <div class="file-drop" id="dropFoto">
+      <i class="ti ti-camera" aria-hidden="true"></i>
+      Arrastra o haz clic para subir fotos
+      <div class="file-list" id="listaFoto"></div>
+    </div>
+    <input type="file" id="inputFoto" accept="image/*" multiple style="display:none">
+  </div>
+  <div>
+    <label>Evidencia documentaria</label>
+    <div class="file-drop" id="dropDoc">
+      <i class="ti ti-file-text" aria-hidden="true"></i>
+      PDF, Word o Excel
+      <div class="file-list" id="listaDoc"></div>
+    </div>
+    <input type="file" id="inputDoc" accept=".pdf,.doc,.docx,.xls,.xlsx" multiple style="display:none">
+  </div>
+</div>
+</section>
+
+<section class="card">
+<h2><span class="step-num">3</span> Vista previa del registro</h2>
+<div class="preview" id="preview"></div>
+<div class="btn-row">
+  <button class="secondary" type="button" onclick="actualizarPreview()"><i class="ti ti-refresh" aria-hidden="true"></i> Actualizar vista previa</button>
+  <button type="button" id="btnEnviar" onclick="validarEnvio()"><i class="ti ti-send" aria-hidden="true"></i> Enviar reporte</button>
+</div>
+<div id="resultado" style="margin-top:12px;"></div>
+</section>
+
+<p class="footer-note">Acceso restringido a usuarios corporativos Microsoft 365 &middot; Gestión Ambiental Corporación Rico S.A.C.</p>
+
+</main>
+
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/tabler-icons/3.1.0/iconfont/tabler-icons.min.css">
+<script>
+let data = [];
+const WEBAPP_URL = "https://script.google.com/macros/s/AKfycbyELFfXmL4hrbkew_Ku4f2ThM9ivcOGre3aHKWHhWNwn3fT6tIyKsSF0vGNexsSkNG2cw/exec";
+
+function uniq(arr) {return [...new Set(arr.filter(x => x !== null && x !== undefined && String(x).trim() !== ""))].sort();}
+function selected(id) {return document.getElementById(id).value;}
+function fillSelect(id, values, placeholder="Seleccione...") {
+  const el=document.getElementById(id); el.innerHTML="";
+  const opt=document.createElement("option"); opt.value=""; opt.textContent=placeholder; el.appendChild(opt);
+  values.forEach(v=>{const o=document.createElement("option"); o.value=v; o.textContent=v; el.appendChild(o);});
+}
+async function init() {
+  document.getElementById("fecha").valueAsDate = new Date();
+  setupFileDrop("dropFoto","inputFoto","listaFoto");
+  setupFileDrop("dropDoc","inputDoc","listaDoc");
+  fillSelect("actividad", [], "Cargando compromisos...");
+  document.getElementById("actividad").disabled = true;
+  try {
+    const res = await fetch(WEBAPP_URL);
+    const json = await res.json();
+    if(json.ok){
+      data = json.data;
+      fillSelect("actividad", uniq(data.map(r=>r.Actividad)));
+      document.getElementById("actividad").disabled = false;
+      updateUnidad();
+    } else {
+      fillSelect("actividad", [], "Error al cargar datos");
+      console.error(json.error);
+    }
+  } catch(err) {
+    fillSelect("actividad", [], "Error de conexión");
+    console.error(err);
+  }
+}
+function updateUnidad() {
+  const act=selected("actividad");
+  const rows=act ? data.filter(r=>r.Actividad===act) : data;
+  fillSelect("unidad", uniq(rows.map(r=>r.Unidad_Fiscalizable)));
+  updateSubunidad();
+}
+function updateSubunidad() {
+  const act=selected("actividad"), uni=selected("unidad");
+  let rows=data;
+  if(act) rows=rows.filter(r=>r.Actividad===act);
+  if(uni) rows=rows.filter(r=>r.Unidad_Fiscalizable===uni);
+  fillSelect("subunidad", uniq(rows.map(r=>r.Granja_Area_Operativa)));
+  updateCompromiso();
+}
+function updateCompromiso() {
+  const act=selected("actividad"), uni=selected("unidad"), sub=selected("subunidad");
+  let rows=data;
+  if(act) rows=rows.filter(r=>r.Actividad===act);
+  if(uni) rows=rows.filter(r=>r.Unidad_Fiscalizable===uni);
+  if(sub) rows=rows.filter(r=>r.Granja_Area_Operativa===sub);
+  const el=document.getElementById("compromiso"); el.innerHTML="";
+  const opt=document.createElement("option"); opt.value=""; opt.textContent="Seleccione compromiso ambiental..."; el.appendChild(opt);
+  rows.forEach(r=>{
+    const o=document.createElement("option");
+    o.value=r.ID_Compromiso;
+    o.textContent=r.ID_Compromiso + " - " + String(r.Compromiso_Ambiental).slice(0,90);
+    el.appendChild(o);
+  });
+  updateTexto();
+}
+function getCompromiso() {
+  return data.find(x=>x.ID_Compromiso===selected("compromiso")) || null;
+}
+function updateTexto() {
+  const r=getCompromiso();
+  const detalleWrap=document.getElementById("detalleWrap");
+  const avancePill=document.getElementById("avancePill");
+  const avanceInput=document.getElementById("avance");
+  if(r){
+    detalleWrap.style.display="block";
+    document.getElementById("textoCompromiso").textContent = r.Compromiso_Ambiental;
+    avancePill.style.display="flex";
+    const ultimo = Number(r.Ultimo_Avance || 0);
+    document.getElementById("ultimoAvanceVal").textContent = ultimo + "%";
+    document.getElementById("progressFill").style.width = ultimo + "%";
+    avanceInput.min = ultimo;
+    if(avanceInput.value !== "" && Number(avanceInput.value) < ultimo) {
+      avanceInput.value = ultimo;
+    }
+  } else {
+    detalleWrap.style.display="none";
+    avanceInput.min = 0;
+  }
+  actualizarPreview();
+}
+function validarAvance() {
+  const r=getCompromiso();
+  const msg=document.getElementById("mensajeAvance");
+  const val=Number(document.getElementById("avance").value || 0);
+  const ultimo=r ? Number(r.Ultimo_Avance || 0) : 0;
+  if(!r) {
+    msg.innerHTML = '<div class="help">Seleccione un compromiso para ver el último avance reportado.</div>';
+    return false;
+  }
+  if(document.getElementById("avance").value === "") {
+    msg.innerHTML = `<div class="help">Último avance reportado: ${ultimo}%. Ingrese ${ultimo}% o más.</div>`;
+    return false;
+  }
+  if(val < ultimo) {
+    msg.innerHTML = `<div class="warning"><i class="ti ti-alert-circle" aria-hidden="true"></i> Último avance reportado: ${ultimo}%. No puede registrar un avance menor.</div>`;
+    return false;
+  }
+  if(val > 100) {
+    msg.innerHTML = `<div class="warning"><i class="ti ti-alert-circle" aria-hidden="true"></i> El valor máximo permitido es 100%.</div>`;
+    return false;
+  }
+  msg.innerHTML = `<div class="ok"><i class="ti ti-check" aria-hidden="true"></i> Avance válido. Último registrado: ${ultimo}%.</div>`;
+  return true;
+}
+function setupFileDrop(dropId, inputId, listId){
+  const drop=document.getElementById(dropId);
+  const input=document.getElementById(inputId);
+  const lista=document.getElementById(listId);
+  drop.addEventListener("click", ()=>input.click());
+  drop.addEventListener("dragover", e=>{e.preventDefault(); drop.style.borderColor="var(--primary)";});
+  drop.addEventListener("dragleave", ()=>{drop.style.borderColor="var(--border)";});
+  drop.addEventListener("drop", e=>{
+    e.preventDefault();
+    drop.style.borderColor="var(--border)";
+    input.files = e.dataTransfer.files;
+    renderFiles(input, lista);
+  });
+  input.addEventListener("change", ()=>renderFiles(input, lista));
+}
+function renderFiles(input, lista){
+  lista.innerHTML="";
+  Array.from(input.files).forEach(f=>{
+    const div=document.createElement("div");
+    div.className="file-item";
+    div.innerHTML = `<i class="ti ti-file" aria-hidden="true"></i> ${f.name}`;
+    lista.appendChild(div);
+  });
+  actualizarPreview();
+}
+function actualizarPreview() {
+  validarAvance();
+  const r=getCompromiso() || {};
+  const fotos = Array.from(document.getElementById("inputFoto").files).map(f=>f.name);
+  const docs = Array.from(document.getElementById("inputDoc").files).map(f=>f.name);
+  document.getElementById("preview").innerHTML = `
+    <span class="badge badge-blue">Actividad: ${selected("actividad") || "-"}</span>
+    <span class="badge badge-blue">Unidad: ${selected("unidad") || "-"}</span>
+    <span class="badge badge-blue">Área: ${selected("subunidad") || "-"}</span>
+    <p><b>ID Compromiso:</b> ${r.ID_Compromiso || "-"}</p>
+    <p><b>Responsable base:</b> ${r.Responsable || "-"}</p>
+    <p><b>Reportado por:</b> ${document.getElementById("reportante").value || "-"}</p>
+    <p><b>Último avance reportado:</b> ${r.Ultimo_Avance!==undefined ? r.Ultimo_Avance : "-"}%</p>
+    <p><b>Nuevo avance reportado:</b> ${document.getElementById("avance").value || "0"}%</p>
+    <p><b>Fecha:</b> ${document.getElementById("fecha").value || "-"}</p>
+    <p><b>Comentario:</b> ${document.getElementById("comentario").value || "-"}</p>
+    <p><b>Fotos adjuntas:</b> ${fotos.length ? fotos.join(", ") : "-"}</p>
+    <p><b>Documentos adjuntos:</b> ${docs.length ? docs.join(", ") : "-"}</p>
+  `;
+}
+function fileToBase64(file){
+  return new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.onload = () => resolve(reader.result.split(",")[1]);
+    reader.onerror = reject;
+    reader.readAsDataURL(file);
+  });
+}
+async function filesToPayload(fileList){
+  const arr = [];
+  for(const f of Array.from(fileList)){
+    const base64 = await fileToBase64(f);
+    arr.push({name: f.name, mimeType: f.type || "application/octet-stream", base64});
+  }
+  return arr;
+}
+async function validarEnvio() {
+  if(!getCompromiso()) { alert("Primero seleccione un compromiso ambiental."); return; }
+  if(!document.getElementById("reportante").value.trim()) { alert("Ingrese el nombre y apellidos de quien reporta."); return; }
+  if(!validarAvance()) { alert("El avance reportado no puede ser menor al último avance registrado."); return; }
+
+  const btn = document.getElementById("btnEnviar") || event.target;
+  const originalText = btn.innerHTML;
+  btn.disabled = true;
+  btn.innerHTML = '<i class="ti ti-loader-2" aria-hidden="true"></i> Enviando...';
+  document.getElementById("resultado").innerHTML = "";
+
+  try {
+    const fotos = await filesToPayload(document.getElementById("inputFoto").files);
+    const documentos = await filesToPayload(document.getElementById("inputDoc").files);
+
+    const payload = {
+      id_compromiso: selected("compromiso"),
+      reportado_por: document.getElementById("reportante").value.trim(),
+      fecha: document.getElementById("fecha").value,
+      avance_nuevo: Number(document.getElementById("avance").value),
+      comentario: document.getElementById("comentario").value,
+      fotos: fotos,
+      documentos: documentos
+    };
+
+    const res = await fetch(WEBAPP_URL + "?action=post&data=" + encodeURIComponent(JSON.stringify(payload)));
+    const json = await res.json();
+
+    if(json.ok){
+      document.getElementById("resultado").innerHTML = '<div class="ok"><i class="ti ti-check" aria-hidden="true"></i> Reporte enviado correctamente.</div>';
+      // refrescar el último avance localmente
+      const r = getCompromiso();
+      if(r) r.Ultimo_Avance = payload.avance_nuevo;
+      updateTexto();
+      document.getElementById("avance").value = "";
+      document.getElementById("comentario").value = "";
+      document.getElementById("inputFoto").value = "";
+      document.getElementById("inputDoc").value = "";
+      document.getElementById("listaFoto").innerHTML = "";
+      document.getElementById("listaDoc").innerHTML = "";
+    } else {
+      document.getElementById("resultado").innerHTML = `<div class="warning"><i class="ti ti-alert-circle" aria-hidden="true"></i> ${json.error}</div>`;
+    }
+  } catch(err) {
+    document.getElementById("resultado").innerHTML = '<div class="warning"><i class="ti ti-alert-circle" aria-hidden="true"></i> Error de conexión. Intente nuevamente.</div>';
+    console.error(err);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = originalText;
+  }
+}
+document.addEventListener("change", e=>{
+  if(e.target.id==="actividad") updateUnidad();
+  if(e.target.id==="unidad") updateSubunidad();
+  if(e.target.id==="subunidad") updateCompromiso();
+  if(e.target.id==="compromiso") updateTexto();
+  actualizarPreview();
+});
+document.addEventListener("input", actualizarPreview);
+init();
+</script>
+</body>
+</html>
